@@ -1,20 +1,19 @@
 /*
-Conerting 2D cloth into 3D cloth, god help me
+3D cloth simulation with air drag and object collision
 
 Author: Zachary Wieczorek
 */
 
 //General parameters
-float floor = 600;
 float gravity = 50;
 float radius = 5;
 
 //Object /obstacle parameters and dimensions
 float objRad = 100;
-//float objX = mouseX;
-//float objY = mouseY;
-float objX = 550;
-float objY = 300;
+float objX = mouseX;
+float objY = mouseY;
+//float objX = 550;
+//float objY = 300;
 //float objZ = 150;
 float objZ =0;
 
@@ -131,7 +130,7 @@ void update(float dt){
     }
  }
  
- //Air friction /drag
+ //Air friction /drag (comment section out to disable drag)
  //apply drag force to velNew and update with the rest
  //  f = (-1/2)*p*c*v^2*a*n
  //    v2an -> single value
@@ -226,31 +225,31 @@ void update(float dt){
     }
   }
   
-  ////Collision handling
-  //for(int i = 0; i < numBalls; i++){
-  //  for(int j = 0; j < numBalls; j++){
-  //    Vec3 objPos = new Vec3(objX, objY, objZ);
-  //    float d = objPos.distanceTo(pos[i][j][0]);
-  //    objX = mouseX;
-  //    objY=  mouseY;
-  //    if(d < objRad + 0.09){
-  //      //get normal vector
-  //      Vec3 n = ((objPos.minus(pos[i][j][0])).times(-1)).normalized();
-  //      //apply dirction to velocity as the bounce vector
-  //      Vec3 bounce = n.times(dot( vel[i][j][0],n));
-  //      bounce.mul(.9);
-  //      //apply bounce to velocity
-  //      vel[i][j][0].subtract(bounce);
-  //      //decollide
-  //      float rx = n.x*(0.1  + objRad - d);
-  //      float ry = n.y*(0.1  + objRad - d);
-  //      float rz = n.z*(0.1  + objRad - d);
-  //      Vec3 decollide = new Vec3(rx,ry,rz);
-  //      pos[i][j][0].add(decollide);
-  //      //println("COLLISION");
-  //    }
-  //  }
-  //}
+  //Collision handling (comment section out to disable collision)
+  for(int i = 0; i < numBalls; i++){
+    for(int j = 0; j < numBalls; j++){
+      Vec3 objPos = new Vec3(objX, objY, objZ);
+      float d = objPos.distanceTo(pos[i][j][0]);
+      objX = mouseX;
+      objY=  mouseY;
+      if(d < objRad + 0.09){
+        //get normal vector
+        Vec3 n = ((objPos.minus(pos[i][j][0])).times(-1)).normalized();
+        //apply dirction to velocity as the bounce vector
+        Vec3 bounce = n.times(dot( vel[i][j][0],n));
+        bounce.mul(.9);
+        //apply bounce to velocity
+        vel[i][j][0].subtract(bounce);
+        //decollide
+        float rx = n.x*(0.1  + objRad - d);
+        float ry = n.y*(0.1  + objRad - d);
+        float rz = n.z*(0.1  + objRad - d);
+        Vec3 decollide = new Vec3(rx,ry,rz);
+        pos[i][j][0].add(decollide);
+        //println("COLLISION");
+      }
+    }
+  }
 }
 
 void draw(){
@@ -305,8 +304,8 @@ void draw(){
   fill(0,0,255);
   pushMatrix();
   //translate(objX, objY, objZ);
-  translate(mouseX, mouseY, 0);
-  //sphere(objRad);
+  translate(mouseX, mouseY, objZ);
+  //sphere(objRad); //Uncomment this to draw the obstacle
   popMatrix();
   stroke(0,0,0);
   fill(0,0,0);
